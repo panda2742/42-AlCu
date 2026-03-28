@@ -18,5 +18,7 @@ typedef struct s_strategy
 
 t_strategy	determine_strategy(t_sticks n, t_strategy *before_strategy, t_bool is_last);
 t_sticks	play(t_sticks n, t_strategy *strat);
+t_sticks	min(t_sticks a, t_sticks b);
+t_sticks	max(t_sticks a, t_sticks b);
 
 #endif

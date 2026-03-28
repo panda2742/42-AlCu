@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "libft.h"
 #include "algo.h"
+#include "render.h"
 
 t_vector*	readBoard(const char* arg) {
 	t_vector*	game = init_vector(sizeof(int));
@@ -143,7 +144,7 @@ bool	getAiMove(t_vector* game, t_vector *strategies) {
 
 int main(int ac, char* const av[]) {
 	t_vector*	game;
-	t_vector*	strategies = init_vector(sizeof(t_strategy));;
+	t_vector*	strategies = init_vector(sizeof(t_strategy));
 
 	if (ac > 2) {
 		ft_putendl_fd("ERROR\nUsage ./Alcu <file>", 2);
@@ -153,14 +154,21 @@ int main(int ac, char* const av[]) {
 	game = readBoard(av[1]);
 	int	fd = (av[1] == NULL ? open("/dev/tty", O_RDONLY) : 0);
 
-
 	t_strategy	*tmp = NULL;
 	for (size_t i = 0; i < game->size; ++i) {
 		t_strategy	strat = determine_strategy(((int *)game->tab)[i], tmp, i + 1 == game->size);
 		vector_push(strategies, &strat);
 		tmp = &strat;
-		__builtin_printf("%zu\t%d\t%d\n", i, strat.has_to_start, strat.has_to_finish);
 	}
+
+	t_render	*render = init_render();
+	if (!render)
+	{
+		vector_destroy(game);
+		vector_destroy(strategies);
+	}
+
+	draw_frame(render, game);
 	while (1) {
 		int	ret;
 		if (fd < 0) {
@@ -173,11 +181,14 @@ int main(int ac, char* const av[]) {
 			ft_putstr_fd((ret == 1 ? "You Win !\n" : ""), 1);
 			break;
 		}
+		draw_frame(render, game);
 		ret = getPlayerMove(game, strategies, fd);
 		if (ret == 1 || ret == -1) {
 			ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
 			break;
 		}
+		draw_frame(render, game);
+		SDL_Delay(700);
 	}
 
 	if (fd > 0) close(fd);
@@ -185,4 +196,5 @@ int main(int ac, char* const av[]) {
 		return 1;
 	vector_destroy(game);
 	vector_destroy(strategies);
+	destroy_render(render);
 }

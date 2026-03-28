@@ -28,7 +28,7 @@ OBJDIR = .obj/
 
 # -----------FILES-----------#
 
-MAIN 	=	main.c algo.c
+MAIN 	=	main.c algo.c render.c
 
 INC		=
 
@@ -63,7 +63,7 @@ all: libs $(NAME)
 bonus: libs $(NAME_BONUS)
 
 $(NAME): $(LIBA) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(MLXFLAG) $(LIBA) -o $(NAME)
+	$(CC) $(CFLAGS) -lSDL2 $(OBJS) $(MLXFLAG) $(LIBA) -o $(NAME)
 
 $(OBJDIR)%.o: $(SRCDIR)%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -I $(INCDIR) $(LIBINCDIR) -c $< -o $@
