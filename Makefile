@@ -104,7 +104,7 @@ print-%:
 -include $(DEPS) $(DEPS_BONUS)
 
 VG			:=      valgrind
-VGFLAGS		:=      --leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes --track-fds=yes --trace-children=yes
+VGFLAGS		:=      --leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes --track-fds=yes --trace-children=yes --suppressions=sdl2.supp
 .PHONY: vg
 vg:	all
 		$(VG) $(VGFLAGS) ./$(NAME) < out 2>outerr

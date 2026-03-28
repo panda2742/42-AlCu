@@ -1,0 +1,330 @@
+# Valgrind suppression file for SDL2 + X11 + dbus + radeonsi/LLVM
+# Generated from AlCu project leak output (Valgrind 3.18.1)
+# Usage: valgrind --suppressions=sdl2.supp ./AlCu
+
+# ──────────────────────────────────────────────────────────────
+# SDL2 — generic still-reachable leaks from SDL_Init / subsystems
+# ──────────────────────────────────────────────────────────────
+{
+   SDL2_init_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*libSDL2*
+}
+
+# ──────────────────────────────────────────────────────────────
+# X11 — locale / LC infrastructure (_Xlc*, XrmInitialize, etc.)
+# ──────────────────────────────────────────────────────────────
+{
+   X11_XlcCreateLC
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcCreateLC
+}
+
+{
+   X11_XlcDefaultLoader
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcDefaultLoader
+}
+
+{
+   X11_XlcUtf8Loader
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcUtf8Loader
+}
+
+{
+   X11_XlcAddLoader
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcAddLoader
+}
+
+{
+   X11_XlcInitLoader
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcInitLoader
+}
+
+{
+   X11_XlcResolveLocaleName
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcResolveLocaleName
+}
+
+{
+   X11_XlcGetLocaleDataBase
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcGetLocaleDataBase
+}
+
+{
+   X11_XlcCreateLocaleDataBase
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcCreateLocaleDataBase
+}
+
+{
+   X11_XlcDefaultMapModifiers
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcDefaultMapModifiers
+}
+
+{
+   X11_XlcAddCharSet
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcAddCharSet
+}
+
+{
+   X11_XlcCreateDefaultCharSet
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcCreateDefaultCharSet
+}
+
+{
+   X11_XlcAddCT
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcAddCT
+}
+
+{
+   X11_XlcInitCTInfo
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcInitCTInfo
+}
+
+{
+   X11_XlcSetConverter
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcSetConverter
+}
+
+{
+   X11_XlcAddUtf8Converters
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcAddUtf8Converters
+}
+
+{
+   X11_XlcAddUtf8LocaleConverters
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XlcAddUtf8LocaleConverters
+}
+
+{
+   X11_XimOpenIM
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XimOpenIM
+}
+
+{
+   X11_XrmInitParseInfo
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XrmInitParseInfo
+}
+
+{
+   X11_XrmInternalStringToQuark
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XrmInternalStringToQuark
+}
+
+{
+   X11_XrmInitialize
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:XrmInitialize
+}
+
+{
+   X11_XrmGetStringDatabase
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:XrmGetStringDatabase
+}
+
+{
+   X11_XGetDefault
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:XGetDefault
+}
+
+{
+   X11_XOpenLC
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_XOpenLC
+}
+
+{
+   X11_XSetLocaleModifiers
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:XSetLocaleModifiers
+}
+
+{
+   X11_XInitThreads
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:XInitThreads
+}
+
+# ──────────────────────────────────────────────────────────────
+# X11 — invalid reads in dl/rpath machinery (spurious on startup)
+# ──────────────────────────────────────────────────────────────
+{
+   dl_rpath_invalid_read_is_dst
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   ...
+}
+
+# ──────────────────────────────────────────────────────────────
+# dbus — still-reachable internal registrations
+# ──────────────────────────────────────────────────────────────
+{
+   dbus_register_shutdown
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dbus_register_shutdown_func
+}
+
+{
+   dbus_generic_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*libdbus*
+}
+
+# ──────────────────────────────────────────────────────────────
+# radeonsi / Mesa — driver still-reachable allocations
+# ──────────────────────────────────────────────────────────────
+{
+   radeonsi_dri_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*radeonsi_dri.so*
+}
+
+# ──────────────────────────────────────────────────────────────
+# LLVM — static command-line option tables (one-time global init)
+# ──────────────────────────────────────────────────────────────
+{
+   LLVM_StringMap_rehash
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_ZN4llvm13StringMapImplL11RehashTableEj
+   ...
+}
+
+{
+   LLVM_generic_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*libLLVM*
+}
+
+# ──────────────────────────────────────────────────────────────
+# libstdc++ — one-shot global init via dlopen
+# ──────────────────────────────────────────────────────────────
+{
+   libstdcxx_global_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*libstdc++*
+}
+
+# ──────────────────────────────────────────────────────────────
+# dynamic linker — dlopen / rpath bookkeeping (not your code)
+# ──────────────────────────────────────────────────────────────
+{
+   dl_open_worker_versions
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_check_map_versions
+   ...
+}
+
+{
+   dl_new_object
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_new_object
+   ...
+}
+
+{
+   dl_map_object_deps
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_map_object_deps
+   ...
+}
+
+# ──────────────────────────────────────────────────────────────
+# NSS / passwd lookup — opened by radeonsi getpwuid, not your code
+# ──────────────────────────────────────────────────────────────
+{
+   nss_module_freeres
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:__nss_module_freeres
+}
