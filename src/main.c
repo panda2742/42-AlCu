@@ -91,7 +91,7 @@ int	getPlayerMove(t_vector*	game, t_vector* strategies, int fd) {
 	while (1) {
 		line = get_next_line(fd);
 		if (!line || line[0] == '\n') {
-			ft_putendl_fd("ERROR\nMemory error stopping.", 2);
+			ft_putendl_fd("ERROR\nCan't read.stopping.", 2);
 			return -1;
 		}
 
@@ -99,7 +99,8 @@ int	getPlayerMove(t_vector*	game, t_vector* strategies, int fd) {
 		int			value = ft_strtoi(line, &endptr);
 
 		if (value <= 0 || value > 3 || *endptr != '\n') {
-			ft_putendl_fd("ERROR\nNumber must be in range [1,3]", 2);
+			write(1, line, ft_strlen(line) - 1);
+			ft_putendl_fd(" - Invalid choice", 1);
 			free(line);
 			continue;
 		}
