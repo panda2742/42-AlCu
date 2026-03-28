@@ -44,18 +44,52 @@ t_vector*	readBoard(const char* arg) {
 	return game;
 }
 
-int	getPlayerMove(t_vector*	game) {
+int	findMax(t_vector* game) {
+	int max = 0;
+
+	for (size_t i = 0; i < game->size; i++) {
+		max = (((int *) game->tab)[i] > max ? ((int*) game->tab)[i] : max); 
+	}
+	return max;
+}
+
+void	displayBoard(t_vector* game) {
+	int	max = findMax(game);
+	int	space;
+
+	for (size_t i = 0; i < game->size; i++) {
+		int	val = ((int*) game->tab)[i];
+
+		space = (max - val) / 2;
+ 
+		for (int j = 0; j < space; j++) {
+			write(1, "  ", 2);
+		}
+
+		if (max % 2 != val % 2)
+			write(1, " ", 1);
+
+		for (int j = 0; j < val; j++) {
+			write(1, "| ", 2);
+		}
+
+		write(1, "\n", 1);
+	}
+}
+
+int	getPlayerMove(t_vector*	game, int fd) {
 	int		items;
 	char*	line;
 
+	displayBoard(game);
 	if (vector_get(game, game->size -1, &items) < 0) {
 		ft_putendl_fd("ERROR\nWrong index", 2);
 		return -1;
 	}
 
 	while (1) {
-		line = get_next_line(STDIN_FILENO);
-		if (!line) {
+		line = get_next_line(fd);
+		if (!line || line[0] == '\n') {
 			ft_putendl_fd("ERROR\nMemory error stopping.", 2);
 			return -1;
 		}
@@ -63,18 +97,20 @@ int	getPlayerMove(t_vector*	game) {
 		const char*	endptr;
 		int			value = ft_strtoi(line, &endptr);
 
-		free(line);
 		if (value <= 0 || value > 3 || *endptr != '\n') {
 			ft_putendl_fd("ERROR\nNumber must be in range [1,3]", 2);
+			free(line);
 			continue;
 		}
 
+		free(line);
 		if (value > items) {
 			ft_putendl_fd("ERROR\nThere is not enough items on that heap", 2);
 			continue;
 		}
 
 		items -= value;
+		vector_set(game, game->size -1, &items);
 		break;
 	}
 
@@ -83,8 +119,8 @@ int	getPlayerMove(t_vector*	game) {
 	return (game->size == 0);
 }
 
-bool	getAiMove(t_vector* game) {
-	return getPlayerMove(game);
+bool	getAiMove(t_vector* game, int fd) {
+	return getPlayerMove(game, fd);
 }
 
 int main(int ac, char* const av[]) {
@@ -96,14 +132,27 @@ int main(int ac, char* const av[]) {
 	}
 
 	game = readBoard(av[1]);
+	int	fd = (av[1] == NULL ? open("/dev/tty", O_RDONLY) : 0);
 	while (1) {
-		if (getPlayerMove(game) == 1) {
-			ft_putendl_fd("You loose !", 1);
+		int	ret;
+		if (fd < 0) {
+			ft_putendl_fd("ERROR\nCan't open stdin", 2);
 			break;
 		}
-		getAiMove(game);
+		ret = getPlayerMove(game, fd);
+		if (ret == 1 || ret == -1) {
+			ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
+			break;
+		}
+
+		ret = getAiMove(game, fd);
+		if (ret == 1 || ret == -1) {
+			ft_putstr_fd((ret == 1 ? "You Win !\n" : ""), 1);
+			break;
+		}
 	}
 
+	if (fd > 0) close(fd);
 	if (!game)
 		return 1;
 	vector_destroy(game);
