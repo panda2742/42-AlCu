@@ -16,6 +16,7 @@ t_render	*init_render(void)
 	render->texture = NULL;
 	render->scroll_offset = 0;
 	render->running = SDL_TRUE;
+	render->choice = 0;
 	for (int i = 0; i < 322; ++i) {
 		render->KEY[i] = 0;
 	}

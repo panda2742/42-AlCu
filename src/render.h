@@ -42,7 +42,6 @@ typedef struct s_render
 	ssize_t			scroll_offset;
 	SDL_bool		running;
 	bool			KEY[322];
-	int				move;
 	int				choice;
 }	t_render;
 
