@@ -318,6 +318,44 @@
    ...
 }
 
+{
+   dl_load_cache_lookup
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_load_cache_lookup
+   ...
+}
+
+{
+   dl_map_object_strdup
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_map_object
+   fun:dl_open_worker_begin
+   ...
+}
+
+{
+   dl_open_add_to_global_resize
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:add_to_global_resize
+   fun:dl_open_worker_begin
+   ...
+}
+
+{
+   dl_lookup_unique
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:do_lookup_unique
+   ...
+}
+
 # ──────────────────────────────────────────────────────────────
 # NSS / passwd lookup — opened by radeonsi getpwuid, not your code
 # ──────────────────────────────────────────────────────────────
