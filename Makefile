@@ -8,7 +8,7 @@ RESET  = \033[0m
 
 # -----------RULES-----------#
 
-CFLAGS = -Wall -Wextra -Werror -MMD -MP -lSDL2
+CFLAGS = -Wall -Wextra -Werror -MMD -MP
 CC = cc
 AR = ar
 ARFLAG = -rcs
@@ -28,7 +28,7 @@ OBJDIR = .obj/
 
 # -----------FILES-----------#
 
-MAIN 	=	main.c algo.c render.c
+MAIN 	=	main.c algo.c render.c event.c
 
 INC		=
 
@@ -107,6 +107,6 @@ VG			:=      valgrind
 VGFLAGS		:=      --leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes --track-fds=yes --trace-children=yes
 .PHONY: vg
 vg:	all
-		$(VG) $(VGFLAGS) ./$(NAME)
+		$(VG) $(VGFLAGS) ./$(NAME) < out 2>outerr
 
 .PHONY: clean fclean re all bonus libs

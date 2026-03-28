@@ -80,9 +80,8 @@ void	displayBoard(t_vector* game) {
 	}
 }
 
-int	getPlayerMove(t_vector*	game, t_vector* strategies, int fd) {
+int	getPlayerMove(t_vector*	game, t_vector* strategies, int value) {
 	int		items;
-	char*	line;
 
 	displayBoard(game);
 	if (vector_get(game, game->size -1, &items) < 0) {
@@ -90,33 +89,13 @@ int	getPlayerMove(t_vector*	game, t_vector* strategies, int fd) {
 		return -1;
 	}
 
-	while (1) {
-		line = get_next_line(fd);
-		if (!line || line[0] == '\n') {
-			ft_putendl_fd("ERROR\nCan't read.stopping.", 2);
-			return -1;
-		}
-
-		const char*	endptr;
-		int			value = ft_strtoi(line, &endptr);
-
-		if (value <= 0 || value > 3 || *endptr != '\n') {
-			write(1, line, ft_strlen(line) - 1);
-			ft_putendl_fd(" - Invalid choice", 1);
-			free(line);
-			continue;
-		}
-
-		free(line);
-		if (value > items) {
-			ft_putendl_fd("ERROR\nThere is not enough items on that heap", 2);
-			continue;
-		}
-
-		items -= value;
-		vector_set(game, game->size -1, &items);
-		break;
+	if (value > items) {
+		ft_putendl_fd("ERROR\nThere is not enough items on that heap", 2);
+		return 2;
 	}
+
+	items -= value;
+	vector_set(game, game->size -1, &items);
 
 	if (items == 0)
 	{
@@ -144,7 +123,6 @@ bool	getAiMove(t_vector* game, t_vector *strategies) {
 
 int main(int ac, char* const av[]) {
 	t_vector*	game;
-	t_vector*	strategies = init_vector(sizeof(t_strategy));
 
 	if (ac > 2) {
 		ft_putendl_fd("ERROR\nUsage ./Alcu <file>", 2);
@@ -152,8 +130,15 @@ int main(int ac, char* const av[]) {
 	}
 
 	game = readBoard(av[1]);
-	int	fd = (av[1] == NULL ? open("/dev/tty", O_RDONLY) : 0);
+	if (!game)
+		return 1;
 
+	t_vector*	strategies = init_vector(sizeof(t_strategy));
+	if (!strategies)
+	{
+		vector_destroy(game);
+		return 1;
+	}
 	t_strategy	*tmp = NULL;
 	for (size_t i = 0; i < game->size; ++i) {
 		t_strategy	strat = determine_strategy(((int *)game->tab)[i], tmp, i + 1 == game->size);
@@ -166,34 +151,82 @@ int main(int ac, char* const av[]) {
 	{
 		vector_destroy(game);
 		vector_destroy(strategies);
-	}
-
-	draw_frame(render, game);
-	while (1) {
-		int	ret;
-		if (fd < 0) {
-			ft_putendl_fd("ERROR\nCan't open stdin", 2);
-			break;
-		}
-
-		ret = getAiMove(game, strategies);
-		if (ret == 1 || ret == -1) {
-			ft_putstr_fd((ret == 1 ? "You Win !\n" : ""), 1);
-			break;
-		}
-		draw_frame(render, game);
-		ret = getPlayerMove(game, strategies, fd);
-		if (ret == 1 || ret == -1) {
-			ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
-			break;
-		}
-		draw_frame(render, game);
-		SDL_Delay(700);
-	}
-
-	if (fd > 0) close(fd);
-	if (!game)
 		return 1;
+	}
+	if (init_events(render) == 1)
+	{
+		vector_destroy(game);
+		vector_destroy(strategies);
+		destroy_render(render);
+		return 1;
+	}
+
+	t_bool	ia_has_to_play = TRUE;
+	SDL_Event	ev;
+	while (render->running) {
+		SDL_SetRenderDrawColor(render->ren, 255, 255, 255, 255);
+		SDL_RenderClear(render->ren);
+		drawButton(render, BUTTON_1, render->button_texture);
+		drawButton(render, BUTTON_2, render->button_texture);
+		drawButton(render, BUTTON_3, render->button_texture);
+		draw_frame(render, game);
+		SDL_RenderPresent(render->ren);
+		if (ia_has_to_play)
+		{
+			int ret = getAiMove(game, strategies);
+			if (ret == 1 || ret == -1) {
+				ft_putstr_fd((ret == 1 ? "You Win !\n" : ""), 1);
+				break;
+			}
+			ia_has_to_play = FALSE;
+			SDL_Delay(700);
+			continue;
+		}
+		while (SDL_PollEvent(&ev)) {
+			switch (ev.type) {
+				int x, y;
+				case SDL_QUIT:
+					render->running = SDL_FALSE;
+					break;
+				case SDL_KEYDOWN:
+					render->KEY[ev.key.keysym.sym] = true;
+					break;
+				case SDL_KEYUP:
+					render->KEY[ev.key.keysym.sym] = false;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					SDL_GetMouseState(&x, &y);
+					if (checkButton(x, y, BUTTON_1))
+						render->choice = 1;
+					else if (checkButton(x, y, BUTTON_2))
+						render->choice = 2;
+					else if (checkButton(x, y, BUTTON_3))
+						render->choice = 3;
+					break;
+				case SDL_MOUSEWHEEL:
+					if (ev.wheel.y > 0)
+						scroll(render, game->size, UP);
+					else
+						scroll(render, game->size, DOWN);
+			}
+			handleInput(render);
+		}
+		if (render->choice) {
+			ft_putstr_fd("Choice: ", 1);
+			ft_putnbr_fd(render->choice, 1);
+			write(1, "\n", 1);
+
+			int ret = getPlayerMove(game, strategies, render->choice);
+			if (ret == 1 || ret == -1) {
+				ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
+				break;
+			}
+			render->choice = 0;
+			if (ret == 2)
+				continue;
+			ia_has_to_play = TRUE;
+		}
+	}
 	vector_destroy(game);
 	vector_destroy(strategies);
 	destroy_render(render);
