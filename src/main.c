@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <SDL2/SDL.h>
 #include "get_next_line.h"
 #include "vector.h"
 #include "libft.h"

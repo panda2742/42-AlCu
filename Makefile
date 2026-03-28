@@ -8,7 +8,7 @@ RESET  = \033[0m
 
 # -----------RULES-----------#
 
-CFLAGS = -Wall -Wextra -Werror -MMD -MP -g3
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -lSDL2
 CC = cc
 AR = ar
 ARFLAG = -rcs
