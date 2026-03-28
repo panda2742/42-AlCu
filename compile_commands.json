@@ -1,0 +1,23 @@
+[
+ {
+  "directory": "/home/secros/Documents/AlCu",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Wextra",
+   "-Werror",
+   "-MMD",
+   "-MP",
+   "-g3",
+   "-I",
+   "inc/",
+   "-I",
+   "./libft/inc/",
+   "-c",
+   "src/main.c",
+   "-o",
+   ".obj/main.o"
+  ],
+  "file": "src/main.c"
+ }
+]
