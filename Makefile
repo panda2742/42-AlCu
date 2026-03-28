@@ -28,9 +28,9 @@ OBJDIR = .obj/
 
 # -----------FILES-----------#
 
-MAIN 	=	main.c
+MAIN 	=	main.c algo.c
 
-INC		=	
+INC		=
 
 # -----------SRCS-----------#
 
@@ -62,11 +62,11 @@ all: libs $(NAME)
 
 bonus: libs $(NAME_BONUS)
 
-$(NAME): $(LIBA) $(OBJS) 
-	$(CC) $(CFLAGS) $(OBJS) $(MLXFLAG) $(LIBA) -o $(NAME) 
+$(NAME): $(LIBA) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(MLXFLAG) $(LIBA) -o $(NAME)
 
 $(OBJDIR)%.o: $(SRCDIR)%.c | $(OBJDIR)
-	$(CC) $(CFLAGS) -I $(INCDIR) $(LIBINCDIR) -c $< -o $@ 
+	$(CC) $(CFLAGS) -I $(INCDIR) $(LIBINCDIR) -c $< -o $@
 
 $(OBJDIR):
 	@mkdir -p $(OBJDIR) $(addprefix $(OBJDIR), $(dir $(patsubst $(SRCDIR)%,%,$(SRCS))))
@@ -102,5 +102,11 @@ print-%:
 	@echo $($(patsubst print-%,%,$@))
 
 -include $(DEPS) $(DEPS_BONUS)
+
+VG			:=      valgrind
+VGFLAGS		:=      --leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes --track-fds=yes --trace-children=yes
+.PHONY: vg
+vg:	all
+		$(VG) $(VGFLAGS) ./$(NAME)
 
 .PHONY: clean fclean re all bonus libs

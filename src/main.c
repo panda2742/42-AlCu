@@ -2,6 +2,7 @@
 #include "get_next_line.h"
 #include "vector.h"
 #include "libft.h"
+#include "algo.h"
 
 t_vector*	readBoard(const char* arg) {
 	t_vector*	game = init_vector(sizeof(int));
@@ -21,7 +22,7 @@ t_vector*	readBoard(const char* arg) {
 	while ((line = get_next_line(fd)) && line[0] != '\n') {
 		const char*	endptr = NULL;
 		int			value = ft_strtoi(line, &endptr);
-		
+
 		if (value <= 0 || value > 10000 || (*endptr != '\n' && *endptr != '\0')) {
 			ft_putendl_fd("ERROR\nNumber must be in range [1,10000]", 2);
 			free(line);
@@ -48,7 +49,7 @@ int	findMax(t_vector* game) {
 	int max = 0;
 
 	for (size_t i = 0; i < game->size; i++) {
-		max = (((int *) game->tab)[i] > max ? ((int*) game->tab)[i] : max); 
+		max = (((int *) game->tab)[i] > max ? ((int*) game->tab)[i] : max);
 	}
 	return max;
 }
@@ -61,7 +62,7 @@ void	displayBoard(t_vector* game) {
 		int	val = ((int*) game->tab)[i];
 
 		space = (max - val) / 2;
- 
+
 		for (int j = 0; j < space; j++) {
 			write(1, "  ", 2);
 		}
@@ -77,7 +78,7 @@ void	displayBoard(t_vector* game) {
 	}
 }
 
-int	getPlayerMove(t_vector*	game, int fd) {
+int	getPlayerMove(t_vector*	game, t_vector* strategies, int fd) {
 	int		items;
 	char*	line;
 
@@ -115,16 +116,32 @@ int	getPlayerMove(t_vector*	game, int fd) {
 	}
 
 	if (items == 0)
+	{
 		vector_pop(game);
+		vector_pop(strategies);
+	}
 	return (game->size == 0);
 }
 
-bool	getAiMove(t_vector* game, int fd) {
-	return getPlayerMove(game, fd);
+bool	getAiMove(t_vector* game, t_vector *strategies) {
+	const size_t last = game->size - 1;
+	int	*game_n = &((int *)game->tab)[last];
+
+	const t_sticks	played = play(*game_n, &((t_strategy *)strategies->tab)[last]);
+	*game_n -= played;
+	__builtin_printf("IA Played %d\n", played);
+
+	if (*game_n == 0)
+	{
+		vector_pop(game);
+		vector_pop(strategies);
+	}
+	return game->size == 0;
 }
 
 int main(int ac, char* const av[]) {
 	t_vector*	game;
+	t_vector*	strategies = init_vector(sizeof(t_strategy));;
 
 	if (ac > 2) {
 		ft_putendl_fd("ERROR\nUsage ./Alcu <file>", 2);
@@ -133,21 +150,30 @@ int main(int ac, char* const av[]) {
 
 	game = readBoard(av[1]);
 	int	fd = (av[1] == NULL ? open("/dev/tty", O_RDONLY) : 0);
+
+
+	t_strategy	*tmp = NULL;
+	for (size_t i = 0; i < game->size; ++i) {
+		t_strategy	strat = determine_strategy(((int *)game->tab)[i], tmp, i + 1 == game->size);
+		vector_push(strategies, &strat);
+		tmp = &strat;
+		__builtin_printf("%zu\t%d\t%d\n", i, strat.has_to_start, strat.has_to_finish);
+	}
 	while (1) {
 		int	ret;
 		if (fd < 0) {
 			ft_putendl_fd("ERROR\nCan't open stdin", 2);
 			break;
 		}
-		ret = getPlayerMove(game, fd);
-		if (ret == 1 || ret == -1) {
-			ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
-			break;
-		}
 
-		ret = getAiMove(game, fd);
+		ret = getAiMove(game, strategies);
 		if (ret == 1 || ret == -1) {
 			ft_putstr_fd((ret == 1 ? "You Win !\n" : ""), 1);
+			break;
+		}
+		ret = getPlayerMove(game, strategies, fd);
+		if (ret == 1 || ret == -1) {
+			ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
 			break;
 		}
 	}
@@ -156,4 +182,5 @@ int main(int ac, char* const av[]) {
 	if (!game)
 		return 1;
 	vector_destroy(game);
+	vector_destroy(strategies);
 }

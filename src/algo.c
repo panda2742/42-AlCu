@@ -21,28 +21,26 @@ t_bool	winning_pos_before_play(t_sticks n)
 	return TRUE;
 }
 
-t_strategy	*determine_strategy(t_sticks n, t_strategy *before_strategy, t_bool is_last)
+t_strategy	determine_strategy(t_sticks n, t_strategy *before_strategy, t_bool is_last)
 {
 	const t_bool	is_winning = winning_pos_before_play(n);
 
-	t_strategy		*strat = malloc(sizeof(t_strategy));
-	if (!strat)
-		return NULL;
+	t_strategy		strat;
 
 	if (before_strategy == NULL)
 	{
-		strat->has_to_finish = FALSE;
-		strat->has_to_start = is_last ? TRUE : is_winning;
+		strat.has_to_finish = FALSE;
+		strat.has_to_start = is_last ? TRUE : is_winning;
 		return strat;
 	}
-	strat->has_to_finish = !before_strategy->has_to_start;
-	strat->has_to_start = is_last ? TRUE : is_winning;
+	strat.has_to_finish = !before_strategy->has_to_start;
+	strat.has_to_start = is_last ? TRUE : is_winning;
 	return strat;
 }
 
 t_sticks	round_play(t_sticks n, t_sticks played)
 {
-	return min(max(1, played), 3);
+	return min(max(1, played), min(3, n));
 }
 
 t_sticks	play(t_sticks n, t_strategy *strat)
