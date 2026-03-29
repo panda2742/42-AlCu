@@ -3,6 +3,7 @@
 #include "vector.h"
 #include "libft.h"
 #include "algo.h"
+#include <time.h>
 
 t_vector*	readBoard(const char* arg) {
 	t_vector*	game = init_vector(sizeof(int));
@@ -243,6 +244,7 @@ int	getPlayerMove(t_vector*	game, t_vector* strategies, int value) {
 int main(int ac, char* const av[]) {
 	t_vector*	game;
 
+	srand(time(NULL));
 	if (ac > 2) {
 		ft_putendl_fd("ERROR\nUsage ./Alcu <file>", 2);
 		return 1;
@@ -296,10 +298,10 @@ int main(int ac, char* const av[]) {
 	while (render->running) {
 		SDL_SetRenderDrawColor(render->ren, 255, 255, 255, 255);
 		SDL_RenderClear(render->ren);
+		draw_frame(render, game);
 		drawButton(render, BUTTON_1, render->button_texture);
 		drawButton(render, BUTTON_2, render->button_texture);
 		drawButton(render, BUTTON_3, render->button_texture);
-		draw_frame(render, game);
 		SDL_RenderPresent(render->ren);
 		if (ia_has_to_play)
 		{

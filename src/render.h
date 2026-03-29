@@ -31,6 +31,8 @@
 #define SPRITE_H 64
 #define MAX_ROTATIONS 8
 
+#define DECO_W 16
+#define DECO_H 16
 
 typedef struct timeval	t_time;
 
@@ -44,6 +46,8 @@ typedef struct s_render
 	SDL_bool		running;
 	bool			KEY[322];
 	int				choice;
+	SDL_Texture		*grass_texture;
+	SDL_Texture		*decorations[32];
 }	t_render;
 
 typedef enum
