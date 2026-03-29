@@ -27,7 +27,7 @@ bool	checkButton(int x, int y, int but_x, int but_y) {
 }
 
 int init_events(t_render *render) {
-	SDL_Surface*	surf = SDL_LoadBMP("./asset/button.bmp");
+	SDL_Surface*	surf = SDL_LoadBMP("./assets/button.bmp");
 	if (!surf) {
 		ft_putendl_fd("ERROR\nSDL_LoadBMP failed", 2);
 		destroy_render(render);
