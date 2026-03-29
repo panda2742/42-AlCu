@@ -177,8 +177,8 @@ void	render_background(t_render *render)
 
 	t_time	now;
 	gettimeofday(&now, NULL);
-	int	time_diff = now.tv_sec - render->last_update.tv_sec - (now.tv_usec - render->last_update.tv_usec) * 1000000;
-	if (time_diff >= 200000)
+	int time_diff = (now.tv_sec - render->last_update.tv_sec) * 1000000 + (now.tv_usec - render->last_update.tv_usec);
+	if (time_diff >= 150000)
 	{
 		render->last_update.tv_sec = now.tv_sec;
 		render->last_update.tv_usec = now.tv_usec;
