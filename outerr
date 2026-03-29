@@ -1,85 +1,18 @@
-==241684== Memcheck, a memory error detector
-==241684== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==241684== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==241684== Command: ./AlCu
-==241684== 
+==60251== Memcheck, a memory error detector
+==60251== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==60251== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==60251== Command: ./AlCu
+==60251== 
 ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-ERROR
-There is not enough items on that heap
-==241684== 
-==241684== FILE DESCRIPTORS: 4 open (3 std) at exit.
-==241684== Open file descriptor 13: /var/lib/sss/mc/passwd
-==241684==    at 0x4B2A634: open (open64.c:41)
-==241684==    by 0x12154D83: ???
-==241684==    by 0x121549BC: ???
-==241684==    by 0x121551F2: ???
-==241684==    by 0x1215112D: ???
-==241684==    by 0x4AFFD9E: getpwuid_r@@GLIBC_2.2.5 (getXXbyYY_r.c:273)
-==241684==    by 0x65ECC61: ??? (in /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so)
-==241684==    by 0x65EAFE2: ??? (in /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so)
-==241684==    by 0x65EB395: ??? (in /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so)
-==241684==    by 0x6DB88F7: ??? (in /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so)
-==241684==    by 0x6DBAFDB: ??? (in /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so)
-==241684==    by 0x6E52A46: amdgpu_winsys_create (in /usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so)
-==241684== 
-==241684== 
-==241684== HEAP SUMMARY:
-==241684==     in use at exit: 318,632 bytes in 3,254 blocks
-==241684==   total heap usage: 106,398 allocs, 103,144 frees, 40,669,470 bytes allocated
-==241684== 
-==241684== 1,056 bytes in 1 blocks are still reachable in loss record 2,308 of 2,328
-==241684==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==241684==    by 0x400E146: malloc (rtld-malloc.h:56)
-==241684==    by 0x400E146: add_to_global_resize (dl-open.c:152)
-==241684==    by 0x400F250: dl_open_worker_begin (dl-open.c:564)
-==241684==    by 0x4B8AB47: _dl_catch_exception (dl-error-skeleton.c:208)
-==241684==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==241684==    by 0x4B8AB47: _dl_catch_exception (dl-error-skeleton.c:208)
-==241684==    by 0x400E34D: _dl_open (dl-open.c:883)
-==241684==    by 0x4AA663B: dlopen_doit (dlopen.c:56)
-==241684==    by 0x4B8AB47: _dl_catch_exception (dl-error-skeleton.c:208)
-==241684==    by 0x4B8AC12: _dl_catch_error (dl-error-skeleton.c:227)
-==241684==    by 0x4AA612D: _dlerror_run (dlerror.c:138)
-==241684==    by 0x4AA66C7: dlopen_implementation (dlopen.c:71)
-==241684==    by 0x4AA66C7: dlopen@@GLIBC_2.34 (dlopen.c:81)
-==241684== 
-==241684== 4,064 bytes in 1 blocks are still reachable in loss record 2,320 of 2,328
-==241684==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==241684==    by 0x400BEA6: calloc (rtld-malloc.h:44)
-==241684==    by 0x400BEA6: do_lookup_unique (dl-lookup.c:271)
-==241684==    by 0x400BEA6: do_lookup_x (dl-lookup.c:556)
-==241684==    by 0x400C210: _dl_lookup_symbol_x (dl-lookup.c:860)
-==241684==    by 0x40114E7: elf_machine_rela (dl-machine.h:294)
-==241684==    by 0x40114E7: elf_dynamic_do_Rela (do-rel.h:142)
-==241684==    by 0x40114E7: _dl_relocate_object (dl-reloc.c:288)
-==241684==    by 0x400EBAD: dl_open_worker_begin (dl-open.c:702)
-==241684==    by 0x4B8AB47: _dl_catch_exception (dl-error-skeleton.c:208)
-==241684==    by 0x400DF99: dl_open_worker (dl-open.c:782)
-==241684==    by 0x4B8AB47: _dl_catch_exception (dl-error-skeleton.c:208)
-==241684==    by 0x400E34D: _dl_open (dl-open.c:883)
-==241684==    by 0x4AA663B: dlopen_doit (dlopen.c:56)
-==241684==    by 0x4B8AB47: _dl_catch_exception (dl-error-skeleton.c:208)
-==241684==    by 0x4B8AC12: _dl_catch_error (dl-error-skeleton.c:227)
-==241684== 
-==241684== LEAK SUMMARY:
-==241684==    definitely lost: 0 bytes in 0 blocks
-==241684==    indirectly lost: 0 bytes in 0 blocks
-==241684==      possibly lost: 0 bytes in 0 blocks
-==241684==    still reachable: 5,120 bytes in 2 blocks
-==241684==         suppressed: 313,512 bytes in 3,252 blocks
-==241684== 
-==241684== For lists of detected and suppressed errors, rerun with: -s
-==241684== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Can't read.stopping.
+==60251== 
+==60251== FILE DESCRIPTORS: 3 open (3 std) at exit.
+==60251== 
+==60251== HEAP SUMMARY:
+==60251==     in use at exit: 0 bytes in 0 blocks
+==60251==   total heap usage: 41 allocs, 41 frees, 2,053 bytes allocated
+==60251== 
+==60251== All heap blocks were freed -- no leaks are possible
+==60251== 
+==60251== For lists of detected and suppressed errors, rerun with: -s
+==60251== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

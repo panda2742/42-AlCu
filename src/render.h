@@ -31,6 +31,7 @@
 #define SPRITE_H 64
 #define MAX_ROTATIONS 8
 
+
 typedef struct timeval	t_time;
 
 typedef struct s_render

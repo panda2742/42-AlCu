@@ -1,10 +1,8 @@
 #include <fcntl.h>
-#include <SDL2/SDL.h>
 #include "get_next_line.h"
 #include "vector.h"
 #include "libft.h"
 #include "algo.h"
-#include "render.h"
 
 t_vector*	readBoard(const char* arg) {
 	t_vector*	game = init_vector(sizeof(int));
@@ -42,7 +40,7 @@ t_vector*	readBoard(const char* arg) {
 		free(line);
 	}
 
-	free(line);
+	if (line) free(line);
 	if (fd > 0) close(fd);
 	return game;
 }
@@ -80,6 +78,141 @@ void	displayBoard(t_vector* game) {
 	}
 }
 
+bool	getAiMove(t_vector* game, t_vector *strategies) {
+	const size_t last = game->size - 1;
+	int	*game_n = &((int *)game->tab)[last];
+
+	const t_sticks	played = play(*game_n, &((t_strategy *)strategies->tab)[last]);
+	*game_n -= played;
+	__builtin_printf("IA Played %d\n", played);
+
+	if (*game_n == 0)
+	{
+		vector_pop(game);
+		vector_pop(strategies);
+	}
+	return game->size == 0;
+}
+
+#ifdef TEXT
+int	getPlayerMove(t_vector*	game, t_vector* strategies, int fd) {
+	int		items;
+	char*	line;
+
+	displayBoard(game);
+	if (vector_get(game, game->size -1, &items) < 0) {
+		ft_putendl_fd("ERROR\nWrong index", 2);
+		return -1;
+	}
+
+	while (1) {
+		line = get_next_line(fd);
+		if (!line || line[0] == '\n') {
+			ft_putendl_fd("ERROR\nCan't read.stopping.", 2);
+			return -1;
+		}
+
+		const char*	endptr;
+		int			value = ft_strtoi(line, &endptr);
+
+		if (value <= 0 || value > 3 || *endptr != '\n') {
+			write(1, line, ft_strlen(line) - 1);
+			ft_putendl_fd(" - Invalid choice", 1);
+			free(line);
+			continue;
+		}
+
+		free(line);
+		if (value > items) {
+			ft_putendl_fd("ERROR\nThere is not enough items on that heap", 2);
+			continue;
+		}
+
+		items -= value;
+		vector_set(game, game->size -1, &items);
+		break;
+	}
+
+	if (items == 0)
+	{
+		vector_pop(game);
+		vector_pop(strategies);
+	}
+	return (game->size == 0);
+}
+
+int main(int ac, char* const av[]) {
+	t_vector*	game;
+	t_vector*	strategies;
+
+	if (ac > 2) {
+		ft_putendl_fd("ERROR\nUsage ./Alcu <file>", 2);
+		return 1;
+	}
+
+	game = readBoard(av[1]);
+	if (!game)
+		return 1;
+
+	if (game->size == 0) {
+		vector_destroy(game);
+	}
+	strategies = init_vector(sizeof(t_strategy));;
+	if (!strategies) {
+		ft_putendl_fd("ERROR\nMemory error", 2);
+		vector_destroy(game);
+		return 1;
+	}
+
+	t_strategy	*tmp = NULL;
+	for (size_t i = 0; i < game->size; ++i) {
+		t_strategy	strat = determine_strategy(((int *)game->tab)[i], tmp, i + 1 == game->size);
+		if (vector_push(strategies, &strat) != 0) {
+			vector_destroy(game);
+			vector_destroy(strategies);
+			ft_putendl_fd("ERROR\nMemory error", 2);
+			return 1;
+		}
+		tmp = &strat;
+		// __builtin_printf("%zu\t%d\t%d\n", i, strat.has_to_start, strat.has_to_finish);
+	}
+
+	int	fd = (av[1] == NULL ? open("/dev/tty", O_RDONLY) : 0);
+	if (fd < 0) {
+		ft_putendl_fd("ERROR\nFailed to reopen TTY", 2);
+		vector_destroy(game);
+		vector_destroy(strategies);
+	}
+
+	while (1) {
+		int	ret;
+		if (fd < 0) {
+			ft_putendl_fd("ERROR\nCan't open stdin", 2);
+			break;
+		}
+
+		ret = getAiMove(game, strategies);
+		if (ret == 1 || ret == -1) {
+			ft_putstr_fd((ret == 1 ? "You Win !\n" : ""), 1);
+			break;
+		}
+		ret = getPlayerMove(game, strategies, fd);
+		if (ret == 1 || ret == -1) {
+			ft_putstr_fd((ret == 1 ? "You loose !\n" : ""), 1);
+			break;
+		}
+	}
+
+	if (fd > 0) close(fd);
+	vector_destroy(game);
+	vector_destroy(strategies);
+}
+
+#endif
+#ifndef TEXT
+#include "render.h"
+#include <SDL2/SDL.h>
+
 int	getPlayerMove(t_vector*	game, t_vector* strategies, int value) {
 	int		items;
 
@@ -103,22 +236,6 @@ int	getPlayerMove(t_vector*	game, t_vector* strategies, int value) {
 		vector_pop(strategies);
 	}
 	return (game->size == 0);
-}
-
-bool	getAiMove(t_vector* game, t_vector *strategies) {
-	const size_t last = game->size - 1;
-	int	*game_n = &((int *)game->tab)[last];
-
-	const t_sticks	played = play(*game_n, &((t_strategy *)strategies->tab)[last]);
-	*game_n -= played;
-	__builtin_printf("IA Played %d\n", played);
-
-	if (*game_n == 0)
-	{
-		vector_pop(game);
-		vector_pop(strategies);
-	}
-	return game->size == 0;
 }
 
 int main(int ac, char* const av[]) {
@@ -231,3 +348,4 @@ int main(int ac, char* const av[]) {
 	vector_destroy(strategies);
 	destroy_render(render);
 }
+#endif
