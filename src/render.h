@@ -44,7 +44,7 @@ typedef struct s_render
 	SDL_Texture		*button_texture[3];
 	ssize_t			scroll_offset;
 	SDL_bool		running;
-	bool			KEY[322];
+	bool			KEY[SDL_NUM_SCANCODES];
 	int				choice;
 	SDL_Texture		*grass_texture;
 	SDL_Texture		*decorations[32];

@@ -45,24 +45,31 @@ t_render	*init_render(void)
 	t_render	*render = malloc(sizeof(t_render));
 	if (!render)
 	{
-		__builtin_printf("Cannot init SDL.");
+		ft_putstr_fd("Cannot init SDL.\n", 2);
 		return NULL;
 	}
 
 	render->win = NULL;
 	render->ren = NULL;
 	render->texture = NULL;
+	render->grass_texture = NULL;
 	render->scroll_offset = 0;
 	render->running = SDL_TRUE;
 	render->choice = 0;
 	render->last_update_i = 0;
 	gettimeofday(&render->last_update, NULL);
-	for (int i = 0; i < 322; ++i) {
+	for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
 		render->KEY[i] = 0;
+	}
+	for (int i = 0; i < 3; ++i) {
+		render->button_texture[i] = NULL;
+	}
+	for (int i = 0; i < 32; ++i) {
+		render->decorations[i] = NULL;
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		__builtin_printf("Cannot init SDL.");
+		ft_putstr_fd("Cannot init SDL.\n", 2);
 		return NULL;
 	}
 
@@ -74,7 +81,7 @@ t_render	*init_render(void)
 	);
 	if (!render->win)
 	{
-		__builtin_printf("Cannot init window.");
+		ft_putstr_fd("Cannot init window.\n", 2);
 		destroy_render(render);
 		return NULL;
 	}
@@ -86,14 +93,14 @@ t_render	*init_render(void)
 	);
 	if (!render->ren)
 	{
-		__builtin_printf("Cannot init renderer.");
+		ft_putstr_fd("Cannot init renderer.\n", 2);
 		destroy_render(render);
 		return NULL;
 	}
 
 	SDL_Surface	*surf = SDL_LoadBMP("./assets/cat.bmp");
 	if (!surf) {
-		__builtin_printf("Cannot init surface.");
+		ft_putstr_fd("Cannot init surface.\n", 2);
 		destroy_render(render);
 		return NULL;
 	}
@@ -102,14 +109,14 @@ t_render	*init_render(void)
 	SDL_FreeSurface(surf);
 	if(!render->texture)
 	{
-		__builtin_printf("Cannot init texture.");
+		ft_putstr_fd("Cannot init textures.\n", 2);
 		destroy_render(render);
 		return NULL;
 	}
 
 	surf = SDL_LoadBMP("./assets/grass.bmp");
 	if (!surf) {
-		__builtin_printf("Cannot init surface.");
+		ft_putstr_fd("Cannot init surface.\n", 2);
 		destroy_render(render);
 		return NULL;
 	}
@@ -118,7 +125,7 @@ t_render	*init_render(void)
 	SDL_FreeSurface(surf);
 	if(!render->texture)
 	{
-		__builtin_printf("Cannot init texture.");
+		ft_putstr_fd("Cannot init texture.\n", 2);
 		destroy_render(render);
 		return NULL;
 	}
@@ -126,7 +133,7 @@ t_render	*init_render(void)
 	for (int i = 0; i < 32; ++i) {
 		surf = SDL_LoadBMP(decorations[i]);
 		if (!surf) {
-			__builtin_printf("Cannot init surface.");
+			ft_putstr_fd("Cannot init surface.\n", 2);
 			destroy_render(render);
 			return NULL;
 		}
@@ -143,6 +150,7 @@ void	destroy_render(t_render *render)
 	if (!render) return;
 
 	if (render->texture) SDL_DestroyTexture(render->texture);
+	if (render->grass_texture) SDL_DestroyTexture(render->grass_texture);
 	if (render->button_texture[0]) SDL_DestroyTexture(render->button_texture[0]);
 	if (render->button_texture[1]) SDL_DestroyTexture(render->button_texture[1]);
 	if (render->button_texture[2]) SDL_DestroyTexture(render->button_texture[2]);
