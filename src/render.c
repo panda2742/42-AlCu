@@ -37,6 +37,9 @@ const char *decorations[] = {
 	"./assets/decorations/tile_31.bmp",
 };
 
+static t_bool	generated = FALSE;
+static int		generated_value[100000];
+
 t_render	*init_render(void)
 {
 	t_render	*render = malloc(sizeof(t_render));
@@ -52,6 +55,8 @@ t_render	*init_render(void)
 	render->scroll_offset = 0;
 	render->running = SDL_TRUE;
 	render->choice = 0;
+	render->last_update_i = 0;
+	gettimeofday(&render->last_update, NULL);
 	for (int i = 0; i < 322; ++i) {
 		render->KEY[i] = 0;
 	}
@@ -141,6 +146,9 @@ void	destroy_render(t_render *render)
 	if (render->button_texture[0]) SDL_DestroyTexture(render->button_texture[0]);
 	if (render->button_texture[1]) SDL_DestroyTexture(render->button_texture[1]);
 	if (render->button_texture[2]) SDL_DestroyTexture(render->button_texture[2]);
+	for (int i = 0; i < 32; i++) {
+		if (render->decorations[i]) SDL_DestroyTexture(render->decorations[i]);
+	}
 	if (render->ren) SDL_DestroyRenderer(render->ren);
 	if (render->win) SDL_DestroyWindow(render->win);
 	SDL_Quit();
@@ -149,8 +157,6 @@ void	destroy_render(t_render *render)
 
 void	render_background(t_render *render)
 {
-	static t_bool	generated = FALSE;
-	static int		generated_value[100000];
 	if (generated == FALSE) {
 		generated = TRUE;
 		for (int i = 0; i < 100000; ++i)
@@ -160,6 +166,16 @@ void	render_background(t_render *render)
 	}
 
 	SDL_RenderCopy(render->ren, render->grass_texture, NULL, NULL);
+
+	t_time	now;
+	gettimeofday(&now, NULL);
+	int	time_diff = now.tv_sec - render->last_update.tv_sec - (now.tv_usec - render->last_update.tv_usec) * 1000000;
+	if (time_diff >= 200000)
+	{
+		render->last_update.tv_sec = now.tv_sec;
+		render->last_update.tv_usec = now.tv_usec;
+		render->last_update_i = (render->last_update_i + 1) % 8;
+	}
 
 	int	y_amount = WIN_H / DECO_H / 6;
 	int	x_amount = WIN_W / DECO_W / 6;
@@ -179,7 +195,7 @@ void	render_background(t_render *render)
 				.w = DECO_W,
 				.h = DECO_H
 			};
-			SDL_RenderCopy(render->ren, render->decorations[generated_value[i * j]], &src, &dst);
+			SDL_RenderCopy(render->ren, render->decorations[generated_value[(i * j) % 100000]], &src, &dst);
 		}
 	}
 }
@@ -187,6 +203,14 @@ void	render_background(t_render *render)
 
 void	draw_frame(t_render *render, t_vector *game)
 {
+	if (generated == FALSE) {
+		generated = TRUE;
+		for (int i = 0; i < 100000; ++i)
+		{
+			generated_value[i] = rand() % 32;
+		}
+	}
+
 	render_background(render);
 	int	k = 0;
 	for (ssize_t i = game->size - 1 - render->scroll_offset; i >= 0; --i) {
@@ -195,15 +219,18 @@ void	draw_frame(t_render *render, t_vector *game)
 
 		const int	n = ((int *)game->tab)[i];
 		for (int j = 0; j < n; j++) {
+			const int x = j * SPRITE_W + FRAME_X;
+			if (x > WIN_W) break;
+
 			SDL_Rect src = {
-				.x = ((j * n) % 8) * SPRITE_W,
+				.x = ((generated_value[(i * j) % 100000] + render->last_update_i) % 8) * SPRITE_W,
 				.y = 0,
 				.w = SPRITE_W,
 				.h = SPRITE_H
 			};
 
 			SDL_Rect dst = {
-				.x = j * SPRITE_W + FRAME_X,
+				.x = x,
 				.y = y,
 				.w = SPRITE_W,
 				.h = SPRITE_H

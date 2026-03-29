@@ -11,8 +11,8 @@
 #define BUTTON_W 256
 #define BUTTON_H 128
 #define FRAME_W (WIN_H - 400)
-#define FRAME_H 900
-#define FRAME_X 200
+#define FRAME_H 1200
+#define FRAME_X 70
 
 #define BUT_HGT_RATIO 5 / 6
 
@@ -48,6 +48,8 @@ typedef struct s_render
 	int				choice;
 	SDL_Texture		*grass_texture;
 	SDL_Texture		*decorations[32];
+	t_time			last_update;
+	int				last_update_i;
 }	t_render;
 
 typedef enum
