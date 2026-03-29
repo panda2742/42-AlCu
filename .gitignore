@@ -2,3 +2,4 @@ a.out
 .obj/
 compile_commands.json
 AlCu
+out*
