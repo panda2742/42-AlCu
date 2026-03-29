@@ -6,7 +6,7 @@
 /*   By: secros <secros@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 10:24:14 by secros            #+#    #+#             */
-/*   Updated: 2025/09/04 15:30:59 by secros           ###   ########.fr       */
+/*   Updated: 2026/03/29 11:16:29 by secros           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_vector	*init_vector(size_t element_size)
 	new = malloc(sizeof(t_vector));
 	if (!new)
 		return (NULL);
-	new->capacity = 1;
+	new->capacity = 16;
 	new->size = 0;
 	new->element_size = element_size;
 	new->tab = malloc(new->capacity * element_size);

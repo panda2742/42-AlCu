@@ -156,6 +156,8 @@ int main(int ac, char* const av[]) {
 
 	if (game->size == 0) {
 		vector_destroy(game);
+		ft_putendl_fd("ERROR\nNo map closing", 2);
+		return 1;
 	}
 	strategies = init_vector(sizeof(t_strategy));;
 	if (!strategies) {
@@ -250,16 +252,27 @@ int main(int ac, char* const av[]) {
 	if (!game)
 		return 1;
 
-	t_vector*	strategies = init_vector(sizeof(t_strategy));
-	if (!strategies)
-	{
+	if (game->size == 0) {
+		ft_putendl_fd("ERROR\nMap is empty", 2);
 		vector_destroy(game);
 		return 1;
 	}
+
+	t_vector*	strategies = init_vector(sizeof(t_strategy));
+	if (!strategies) {
+		vector_destroy(game);
+		return 1;
+	}
+
 	t_strategy	*tmp = NULL;
 	for (size_t i = 0; i < game->size; ++i) {
 		t_strategy	strat = determine_strategy(((int *)game->tab)[i], tmp, i + 1 == game->size);
-		vector_push(strategies, &strat);
+		if (vector_push(strategies, &strat) != 0) {
+			vector_destroy(game);
+			vector_destroy(strategies);
+			ft_putendl_fd("ERORR\nMemory error", 2);
+			return 1;
+		}
 		tmp = &strat;
 	}
 

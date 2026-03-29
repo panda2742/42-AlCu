@@ -8,7 +8,7 @@ RESET  = \033[0m
 
 # -----------RULES-----------#
 
-CFLAGS = -Wall -Wextra -Werror -MMD -MP
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -g3
 CC = cc
 AR = ar
 ARFLAG = -rcs
@@ -58,7 +58,14 @@ NAME =	AlCu
 
 # -----------RULES-----------#
 
+ifeq ($(TEXT), 1)
+CFLAGS += -DTEXT=1
+endif
+
 all: libs $(NAME)
+
+text: 
+	make re TEXT=1
 
 bonus: libs $(NAME_BONUS)
 
