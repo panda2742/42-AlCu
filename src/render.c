@@ -138,7 +138,9 @@ void	destroy_render(t_render *render)
 	if (!render) return;
 
 	if (render->texture) SDL_DestroyTexture(render->texture);
-	if (render->button_texture) SDL_DestroyTexture(render->button_texture);
+	if (render->button_texture[0]) SDL_DestroyTexture(render->button_texture[0]);
+	if (render->button_texture[1]) SDL_DestroyTexture(render->button_texture[1]);
+	if (render->button_texture[2]) SDL_DestroyTexture(render->button_texture[2]);
 	if (render->ren) SDL_DestroyRenderer(render->ren);
 	if (render->win) SDL_DestroyWindow(render->win);
 	SDL_Quit();

@@ -285,6 +285,7 @@ int main(int ac, char* const av[]) {
 		vector_destroy(strategies);
 		return 1;
 	}
+
 	if (init_events(render) == 1)
 	{
 		vector_destroy(game);
@@ -298,10 +299,17 @@ int main(int ac, char* const av[]) {
 	while (render->running) {
 		SDL_SetRenderDrawColor(render->ren, 255, 255, 255, 255);
 		SDL_RenderClear(render->ren);
+<<<<<<< HEAD
 		draw_frame(render, game);
 		drawButton(render, BUTTON_1, render->button_texture);
 		drawButton(render, BUTTON_2, render->button_texture);
 		drawButton(render, BUTTON_3, render->button_texture);
+=======
+		drawButton(render, BUTTON_1, render->button_texture[0]);
+		drawButton(render, BUTTON_2, render->button_texture[1]);
+		drawButton(render, BUTTON_3, render->button_texture[2]);
+		draw_frame(render, game);
+>>>>>>> b5a22d1 (Feat: Button now have number)
 		SDL_RenderPresent(render->ren);
 		if (ia_has_to_play)
 		{

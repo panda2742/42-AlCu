@@ -116,4 +116,4 @@ VGFLAGS		:=      --leak-check=full --show-leak-kinds=all --track-origins=yes --s
 vg:	all
 		$(VG) $(VGFLAGS) ./$(NAME)
 
-.PHONY: clean fclean re all bonus libs
+.PHONY: clean fclean re all bonus libs text

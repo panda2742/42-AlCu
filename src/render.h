@@ -41,7 +41,7 @@ typedef struct s_render
 	SDL_Window		*win;
 	SDL_Renderer	*ren;
 	SDL_Texture		*texture;
-	SDL_Texture		*button_texture;
+	SDL_Texture		*button_texture[3];
 	ssize_t			scroll_offset;
 	SDL_bool		running;
 	bool			KEY[322];
