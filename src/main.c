@@ -85,8 +85,9 @@ bool	getAiMove(t_vector* game, t_vector *strategies) {
 
 	const t_sticks	played = play(*game_n, &((t_strategy *)strategies->tab)[last]);
 	*game_n -= played;
-	__builtin_printf("IA Played %d\n", played);
-
+	ft_putstr_fd("AI played: ", 1);
+	ft_putnbr_fd(played, 1);
+	write(1, "\n", 1);
 	if (*game_n == 0)
 	{
 		vector_pop(game);
@@ -219,7 +220,7 @@ int main(int ac, char* const av[]) {
 int	getPlayerMove(t_vector*	game, t_vector* strategies, int value) {
 	int		items;
 
-	displayBoard(game);
+	// displayBoard(game);
 	if (vector_get(game, game->size -1, &items) < 0) {
 		ft_putendl_fd("ERROR\nWrong index", 2);
 		return -1;
@@ -322,10 +323,10 @@ int main(int ac, char* const av[]) {
 					render->running = SDL_FALSE;
 					break;
 				case SDL_KEYDOWN:
-					render->KEY[ev.key.keysym.sym] = true;
+					render->KEY[ev.key.keysym.scancode] = true;
 					break;
 				case SDL_KEYUP:
-					render->KEY[ev.key.keysym.sym] = false;
+					render->KEY[ev.key.keysym.scancode] = false;
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					SDL_GetMouseState(&x, &y);

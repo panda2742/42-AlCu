@@ -4,7 +4,7 @@
 #include "render.h"
 
 void	handleInput(t_render *render) {
-	if (render->KEY[SDLK_ESCAPE])
+	if (render->KEY[SDL_SCANCODE_ESCAPE])
 		render->running = SDL_FALSE;
 }
 
