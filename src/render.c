@@ -150,10 +150,13 @@ void	destroy_render(t_render *render)
 void	render_background(t_render *render)
 {
 	static t_bool	generated = FALSE;
-	static int		generated_value = 0;
+	static int		generated_value[100000];
 	if (generated == FALSE) {
 		generated = TRUE;
-		generated_value = rand();
+		for (int i = 0; i < 100000; ++i)
+		{
+			generated_value[i] = rand() % 32;
+		}
 	}
 
 	SDL_RenderCopy(render->ren, render->grass_texture, NULL, NULL);
@@ -176,7 +179,7 @@ void	render_background(t_render *render)
 				.w = DECO_W,
 				.h = DECO_H
 			};
-			SDL_RenderCopy(render->ren, render->decorations[(i * j % 234297852 * generated_value) % 32], &src, &dst);
+			SDL_RenderCopy(render->ren, render->decorations[generated_value[i * j]], &src, &dst);
 		}
 	}
 }
